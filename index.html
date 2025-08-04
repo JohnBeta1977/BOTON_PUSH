@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notificación PWA</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/BOTON_PUSH/manifest.json">
 </head>
 <body>
     <h1>Notificación PWA Simple</h1>
     <button id="send-notification">Enviar Notificación</button>
-    <script src="main.js"></script>
+    <script src="/BOTON_PUSH/main.js"></script>
     <script>
-        // Registrar el service worker
+        // Registrar el Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                navigator.serviceWorker.register('/BOTON_PUSH/service-worker.js')
                     .then(registration => {
                         console.log('Service Worker registrado con éxito:', registration);
                     })
@@ -25,5 +25,4 @@
         }
     </script>
 </body>
-
 </html>
