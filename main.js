@@ -5,14 +5,13 @@ document.getElementById('send-notification').addEventListener('click', () => {
             if (permission === 'granted') {
                 console.log('Permiso de notificación concedido.');
 
-                // 2. Enviar la notificación
-                const notificationTitle = 'Hola desde mi PWA!';
+                // 2. Enviar la notificación con el nuevo texto y el ícono
+                const notificationTitle = 'He aquí esta es la notificación de tu página PWA';
                 const notificationOptions = {
-                    body: 'Esta es una notificación de prueba manual.',
-                    icon: 'icon.png' // Asegúrate de tener un icono
+                    body: 'Acompañada de un icono de hoja de planta',
+                    icon: '/BOTON_PUSH/plant-leaf.png'
                 };
 
-                // Uso del service worker para mostrar la notificación
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(notificationTitle, notificationOptions);
                 });
