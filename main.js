@@ -5,8 +5,44 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.error('Error registrando SW:', err));
 }
 
-// Pedir permiso y enviar notificación
-document.getElementById('notifyBtn').addEventListener('click', async () => {
+// Solicitar permiso de notificación si no se ha solicitado
+async function solicitarPermiso() {
+  if (!('Notification' in window)) return;
+  const current = Notification.permission;
+  if (current === 'default') {
+    await Notification.requestPermission();
+  }
+}
+
+// Programar notificación automática
+async function programarNotificacion() {
+  const yaNotificado = localStorage.getItem('notificado');
+  if (yaNotificado) return;
+
+  if (Notification.permission === 'granted') {
+    console.log('Programando notificación automática en 5 minutos...');
+    setTimeout(() => {
+      navigator.serviceWorker.ready.then(registration => {
+        registration.showNotification('¡Gracias por instalar!', {
+          body: 'Han pasado 5 minutos desde que instalaste la app 😄',
+          icon: './logo.png',
+          vibrate: [200, 100, 200],
+          tag: 'instalacion-pwa'
+        });
+        localStorage.setItem('notificado', '1'); // Evita que se repita
+      });
+    }, 5 * 60 * 1000); // 5 minutos
+  }
+}
+
+// Ejecutar cuando el DOM esté listo
+window.addEventListener('load', async () => {
+  await solicitarPermiso();
+  programarNotificacion();
+});
+
+// Botón de prueba manual
+document.getElementById('notifyBtn')?.addEventListener('click', async () => {
   if (!('Notification' in window)) {
     alert('Este navegador no soporta notificaciones.');
     return;
@@ -26,3 +62,4 @@ document.getElementById('notifyBtn').addEventListener('click', async () => {
     alert('Permiso de notificación denegado.');
   }
 });
+
