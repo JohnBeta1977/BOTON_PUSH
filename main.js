@@ -1,26 +1,28 @@
-document.getElementById('send-notification').addEventListener('click', () => {
-    // 1. Solicitar permiso de notificación
-    if ('Notification' in window) {
-        Notification.requestPermission(permission => {
-            if (permission === 'granted') {
-                console.log('Permiso de notificación concedido.');
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js')
+    .then(() => console.log('SW registrado'))
+    .catch(err => console.error('Error registrando SW:', err));
+}
 
-                // 2. Enviar la notificación con el nuevo texto y el ícono
-                const notificationTitle = 'He aquí esta es la notificación de tu página PWA';
-                const notificationOptions = {
-                    body: 'Acompañada de un icono de hoja de planta',
-                    icon: '/BOTON_PUSH/plant-leaf.png'
-                };
+// Pedir permiso y enviar notificación
+document.getElementById('notifyBtn').addEventListener('click', async () => {
+  if (!('Notification' in window)) {
+    alert('Este navegador no soporta notificaciones.');
+    return;
+  }
 
-                navigator.serviceWorker.ready.then(registration => {
-                    registration.showNotification(notificationTitle, notificationOptions);
-                });
-
-            } else {
-                console.log('Permiso de notificación denegado.');
-            }
-        });
-    } else {
-        console.log('Las notificaciones no son compatibles en este navegador.');
-    }
+  const permission = await Notification.requestPermission();
+  if (permission === 'granted') {
+    navigator.serviceWorker.ready.then(registration => {
+      registration.showNotification('Hola desde la PWA!', {
+        body: 'Esta es una notificación local 😎',
+        icon: './logo.png',
+        vibrate: [100, 50, 100],
+        tag: 'simple-pwa-notify'
+      });
+    });
+  } else {
+    alert('Permiso de notificación denegado.');
+  }
 });
