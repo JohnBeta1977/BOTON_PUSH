@@ -1,29 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notificación PWA</title>
-    <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PWA Notificaciones</title>
+
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./logo.png" />
+  <meta name="theme-color" content="#317EFB" />
 </head>
 <body>
-    <h1>Notificación PWA Simple</h1>
-    <button id="send-notification">Enviar Notificación</button>
-    <script src="main.js"></script>
-    <script>
-        // Registrar el service worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/BOTON_PUSH/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker registrado con éxito:', registration);
-                    })
-                    .catch(error => {
-                        console.log('Fallo el registro del Service Worker:', error);
-                    });
-            });
-        }
-    </script>
-</body>
+  <h1>Notificaciones en PWA</h1>
+  <button id="notifyBtn">Enviar Notificación</button>
 
+  <script src="./main.js"></script>
+</body>
 </html>
+
+
