@@ -33,8 +33,8 @@ exports.subscribe = functions.https.onRequest(async (req, res) => {
 
 // Función programada para enviar la notificación push
 // Se ejecutará todos los días a la 1:30 PM (UTC)
-exports.sendDailyPushNotification = functions.pubsub.schedule('30 13 * * *').onRun(async (context) => {
-    console.log('Running daily push notification job at 1:30 PM UTC');
+exports.sendDailyPushNotification = functions.pubsub.schedule('00 14 * * *').onRun(async (context) => {
+    console.log('Running daily push notification job at 2:00 PM UTC');
 
     const payload = JSON.stringify({
         notification: {
