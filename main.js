@@ -1,65 +1,51 @@
-// Registrar Service Worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js')
-    .then(() => console.log('SW registrado'))
-    .catch(err => console.error('Error registrando SW:', err));
-}
+// Tus credenciales de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyB1BpsgP-zKlq-YfrhjpKF7Nt7bQm1zUxs",
+    authDomain: "salud-integral-pwa.firebaseapp.com",
+    projectId: "salud-integral-pwa",
+    storageBucket: "salud-integral-pwa.firebasestorage.app",
+    messagingSenderId: "485268405075",
+    appId: "1:485268405075:web:b9af1c39ea4aead3f0bfa6"
+};
 
-// Solicitar permiso de notificación si no se ha solicitado
-async function solicitarPermiso() {
-  if (!('Notification' in window)) return;
-  const current = Notification.permission;
-  if (current === 'default') {
-    await Notification.requestPermission();
-  }
-}
+// Clave VAPID pública
+const vapidPublicKey = 'BInO8Dg-awsarYdPs6eFZNO4sgOCNbHkJkuFHzLt25xPcDAjGLwrKwUwW5ci-5IqKNSvOoSmji5U3G9bMbobG3M';
 
-// Programar notificación automática
-async function programarNotificacion() {
-  const yaNotificado = localStorage.getItem('notificado');
-  if (yaNotificado) return;
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
 
-  if (Notification.permission === 'granted') {
-    console.log('Programando notificación automática en 5 minutos...');
-    setTimeout(() => {
-      navigator.serviceWorker.ready.then(registration => {
-        registration.showNotification('¡Gracias por instalar!', {
-          body: 'Han pasado 5 minutos desde que instalaste la app 😄',
-          icon: './logo.png',
-          vibrate: [200, 100, 200],
-          tag: 'instalacion-pwa'
+// Obtener el botón de suscripción
+const subscribeButton = document.getElementById('subscribe-button');
+
+// Lógica para suscribir al usuario
+const subscribeUser = async () => {
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: vapidPublicKey
         });
-        localStorage.setItem('notificado', '1'); // Evita que se repita
-      });
-    }, 5 * 60 * 1000); // 5 minutos
-  }
-}
 
-// Ejecutar cuando el DOM esté listo
-window.addEventListener('load', async () => {
-  await solicitarPermiso();
-  programarNotificacion();
-});
+        console.log('Suscripción exitosa:', subscription);
+        alert('Te has suscrito a las notificaciones. ¡Gracias!');
 
-// Botón de prueba manual
-document.getElementById('notifyBtn')?.addEventListener('click', async () => {
-  if (!('Notification' in window)) {
-    alert('Este navegador no soporta notificaciones.');
-    return;
-  }
+        // Aquí debes enviar la suscripción a tu servidor.
+        // Por ejemplo, con una llamada fetch:
+        // await fetch('/api/subscribe', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(subscription)
+        // });
 
-  const permission = await Notification.requestPermission();
-  if (permission === 'granted') {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.showNotification('Hola desde la PWA!', {
-        body: 'Esta es una notificación local 😎',
-        icon: './logo.png',
-        vibrate: [100, 50, 100],
-        tag: 'simple-pwa-notify'
-      });
-    });
-  } else {
-    alert('Permiso de notificación denegado.');
-  }
+    } catch (error) {
+        console.error('Fallo la suscripción:', error);
+        alert('No se pudo suscribir a las notificaciones. Por favor, revisa los permisos.');
+    }
+};
+
+// Agregar un listener al botón
+subscribeButton.addEventListener('click', () => {
+    subscribeUser();
 });
 
